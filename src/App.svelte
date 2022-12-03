@@ -29,7 +29,7 @@
   let cardPressed = null;
   let previousEntries = [];
 
-  const keyboard = ["PageDown", "*", "-", "'", "b", "6", "<", "1"];
+  let keyboard = [];
   const keys = {};
 
   let sections = []
@@ -48,6 +48,7 @@
   }
 
   function documentKeyDown(e) {
+    console.log(keys[e.key]);
     if (!keys[e.key]) {
       return;
     } 
@@ -106,10 +107,21 @@
     let name = document.getElementById("name").value
     let key = document.getElementById("key").value 
     let sound = document.getElementById("x")
-    console.log(sound) 
-    let element = {"sound": sound, "name": name, "key": key}
-    sections.push(element);
-    sections = sections
+    if (name != '' && key != '' && sound != null){
+      if (!keyboard.includes(key)){
+        let element = {"sound": sound, "name": name, "key": key}
+        sections.push(element);
+        sections = sections;
+        keys[key] = element;
+        keyboard.push(key);
+        keyboard = keyboard;
+        showModal = false;
+      } else {
+        window.alert("Key already in use");
+      }
+      
+    }
+    
   }
   
 </script>
@@ -169,8 +181,11 @@
 
 {#if showModal}
 	<Modal on:close="{() => showModal = false}">
-    <input type="text" id="name">
-    <input type="text" id="key">
+    <label for="name">Sound name</label>
+    <input type="text" id="name" name="name">
+    <br>
+    <label for="key">Keyboard key</label>
+    <input type="text" id="key" name="key" maxlength="1">
     <section>
       <audio controls />
       <button on:click={startRecording}>Record</button>
