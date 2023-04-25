@@ -39,6 +39,9 @@
 
   function playSound(sound, intention=null) {
       // doPost(sound.name, 'sujeto', 'guardian');
+      if (window.event.which === 3){
+        return;
+      }
       if (window.event.ctrlKey){
         intention = "Modeling by Guardian"
       }
@@ -88,6 +91,7 @@
   let showDeleteModal = false;
   let showModifyModal = false;
   let changeKeyModal = false;
+  let newCardModal = false;
 
   function deleteCard(){
     for(let i = 0; i < sections.length; i++){
@@ -98,6 +102,8 @@
     }
     showDeleteModal = false;
   }
+
+  
 
   function changeKey(){
     let key = document.getElementById("newkey").value 
@@ -139,6 +145,17 @@
     isActive = false;
     mediaRecorder.stop() 
     }
+
+  function safeMode(){
+    let answer = document.getElementById("safeMode").value 
+    if (answer === "Add New Card"){
+      showModal = false;
+      newCardModal = true;
+    }
+    else {
+      showModal = false;
+    }
+  }
   function addSound(){
     let name = document.getElementById("name").value
     let key = document.getElementById("key").value 
@@ -218,7 +235,14 @@
 </div>
 
 {#if showModal}
-	<Modal on:close="{() => showModal = false}">
+  <Modal on:close="{()=> showModal = false}">
+    <p>Type the next word to add a new card: "Add New Card"</p>
+    <input type="text" id="safeMode" name="safeMode">
+    <button on:click={safeMode}>Next</button>
+  </Modal>
+{/if}
+{#if newCardModal}
+	<Modal on:close="{() => newCardModal = false}">
     <label for="name">Sound name</label>
     <input type="text" id="name" name="name">
     <br>
