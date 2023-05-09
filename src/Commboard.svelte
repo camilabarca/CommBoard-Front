@@ -2,12 +2,20 @@
   import sounds from './sounds.json';
   import Modal from './Modal.svelte';
   import { onMount } from 'svelte'
-  import { db } from "./firebase/firebase";
+  import { database } from "./firebase/firebase";
+
+  export let firebaseUser;
   
 
   const d = new Date();
 
-  function sendData(date, sound, subject, guardian) {
+  function sendData(date, sound, subject) {
+    let guardian = firebaseUser;
+    if (!guardian) {
+      guardian = "Anonymous"
+    } else {
+      guardian = firebaseUser.email;
+    }
     const data = {
       date: date,
       sound: sound,
@@ -16,7 +24,7 @@
     };
 
     // Push the data to the "interactions" node in the database
-    db.ref("interactions").push(data);
+    database.ref("interactions").push(data);
   }
 
   let currentKey = 0;
