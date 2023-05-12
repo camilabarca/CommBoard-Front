@@ -9,6 +9,7 @@
     } from "firebase/auth";
     import { db } from "./firebase/firebase";
     import { doc, getDoc, setDoc } from "firebase/firestore";
+    import Header from "./Header.svelte";
 
     let firebaseUser = null;
 
@@ -43,16 +44,19 @@
     }
 
 </script>
-  
+ <main>
+    <Header title="InCA CommBoard">
+        <div>
+            {#if firebaseUser}
+                <button on:click={logout} class="btn btn-primary">Logout</button>
+            {:else}
+                <button on:click={login} class="btn btn-secondary"
+                    >Login with Google</button
+                >
+            {/if}
+        </div>
+    </Header>
 
-<div>
-    {#if firebaseUser}
-        <button on:click={logout} class="btn btn-primary">Logout</button>
-    {:else}
-        <button on:click={login} class="btn btn-secondary"
-            >Login with Google</button
-        >
-    {/if}
-</div>
-
-<Commboard firebaseUser ={firebaseUser}/>
+    
+    <Commboard firebaseUser ={firebaseUser}/>
+</main>

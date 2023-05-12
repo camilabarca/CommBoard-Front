@@ -73,6 +73,7 @@
 		padding: 1em;
 		border-radius: 0.2em;
 		background: white;
+		text-align: center;
 	}
 
 	button {

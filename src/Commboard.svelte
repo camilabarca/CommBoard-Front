@@ -34,7 +34,7 @@
   let isActive = false;
 
   let keyboard = ["k", "m", "o", "p"];
-  
+
   let sections = [{"sound": new Audio('/../public/sounds/no.mp3'), "name": "No", "key": "k"},
                   {"sound": new Audio('/../public/sounds/yes.mp3'), "name": "Yes", "key": "m"},
                   {"sound": new Audio('/../public/sounds/drink.mp3'), "name": "Drink", "key": "o"},
@@ -276,8 +276,8 @@
 </script>
 
 <!-- Add a new card -->
-<div>
-  <button on:click={() => showModal = true}>Add new card</button>
+<div class="addCardContainer">
+  <button on:click={() => showModal = true} class='addCard'>Add new card</button>
 </div>
 
 <!-- Show all sounds in the list -->
@@ -495,6 +495,10 @@
   }
   .logs_container {
     color: #000f08;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 10px;
   }
   .container {
     width: 100vmin;
@@ -541,5 +545,13 @@
       color: #000f08 !important;
       transform: translate(5px, 5px);
       box-shadow: none;
+    }
+    .addCard {
+      margin: 10px
+    }
+
+    .addCardContainer {
+      display: flex;
+      justify-content: center;
     }
 </style>
