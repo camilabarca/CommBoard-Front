@@ -33,54 +33,64 @@
   let previousEntries = [];
   let isActive = false;
 
-  let keyboard = [];
-  // 'k', 'm', 'o', 'p'
-  // {"sound": new Audio('/../public/sounds/no.mp3'), "name": "No", "key": "k"},
-  // {"sound": new Audio('/../public/sounds/yes.mp3'), "name": "Yes", "key": "m"},
-  // {"sound": new Audio('/../public/sounds/drink.mp3'), "name": "Drink", "key": "o"},
-  // {"sound": new Audio('/../public/sounds/eat.mp3'), "name": "Eat", "key": "p"}
-
-  let sections = []
+  let keyboard = ["k", "m", "o", "p"];
   
-  const keys = {};
-  // 'k': sections[0],
-  // 'm': sections[1],
-  // 'o': sections[2],
-  // 'p': sections[3]
+  let sections = [{"sound": new Audio('/../public/sounds/no.mp3'), "name": "No", "key": "k"},
+                  {"sound": new Audio('/../public/sounds/yes.mp3'), "name": "Yes", "key": "m"},
+                  {"sound": new Audio('/../public/sounds/drink.mp3'), "name": "Drink", "key": "o"},
+                  {"sound": new Audio('/../public/sounds/eat.mp3'), "name": "Eat", "key": "p"}]
+  
+  let keys = {"k": sections[0], "m": sections[1], "o": sections[2], "p": sections[3]};
+
 
   const audio = new Audio();
 
   function playSound(sound, intention=null) {
+      // obtain date
       let date = new Date();
-      sendData(date.toLocaleString(), sound.name, 'sujeto', 'guardian');
+
+      // send data with date, sound name and subject
+      sendData(date.toLocaleString(), sound.name, 'sujeto');
+      // @ts-ignore
+      // if right click, don´t play sound
       if (window.event.which === 3){
         return;
       }
+      // @ts-ignore
+      // if control was pressed, the intention was modeled by guardian
       if (window.event.ctrlKey){
         intention = "Modeling by Guardian"
       }
       
+      // play sound
       sound.sound.play();
+
+      // add played sound to previous entries
       previousEntries.unshift({name: sound.name, intention: intention, time: date.toLocaleString()});
+      // if there is more than 10 entries, delete last one
       if (previousEntries.length > 10) {
         previousEntries.pop();
       }
       previousEntries = previousEntries;
+      // save card pressed
       cardPressed = sound.name;
   }
 
   function documentKeyDown(e) {
-    console.log(e);
+    // if the key is not in the dictionary, ignore (no sound associated)
     if (!keys[e.key]) {
       return;
     } 
+    // get file and name associated to key
     const {
       file, name
     } = keys[e.key];
-    const d = new Date();
+    
+    // if control is pressed play sound and set intention do modeled by guardian
     if(e.ctrlKey){
       playSound(keys[e.key], "Modeling by Guardian");
       currentSound = name;
+    // else, just play souns
     }else {
       playSound(keys[e.key]);
       currentSound = name;
@@ -88,54 +98,107 @@
     
   }
 
+  // set currentSound to null whren keyboard press ends
   function documentKeyUp(e) {
     currentSound = null;
   }
   
+  // add event listeners to keydown and keyup events
   document.addEventListener('keydown', documentKeyDown);
   document.addEventListener("keyup", documentKeyUp);
 
+  // set intention by user
   function logSelected(i) {
     const element = document.getElementById(i.toString());
+    // @ts-ignore
     const option = element.value;
     previousEntries[i].intention = option;
   }
 
+  // show modals values
   let showModal = false;
   let showDeleteModal = false;
   let showModifyModal = false;
   let changeKeyModal = false;
   let newCardModal = false;
 
+  // delete a card
   function deleteCard(){
+    // look for the card to be deleted
     for(let i = 0; i < sections.length; i++){
+      // if you find the card pressed
       if(sections[i].name === cardPressed){
+        // get the old key of this card
+        let oldKey = sections[i].key;
+
+        // delete element from sections list
         sections.splice(i, 1);
         sections = sections;
+
+        // delete key from dictionary
+        delete keys[oldKey];
+        keys = keys;
+
+        // delete key from dictionary
+        keyboard.splice(i, 1);
+        keyboard = keyboard;
       }
     }
+
+    // close modal
     showDeleteModal = false;
   }
 
   
 
+  // change key associated with a card
   function changeKey(){
+    // @ts-ignore
+    // get the new value of the key
     let key = document.getElementById("newkey").value 
-    for(let i = 0; i < sections.length; i++){
-      if(sections[i].name === cardPressed){
-        console.log(sections[i]);
-        let element = {"sound": sections[i].sound, "name": sections[i].name, "key": key}
-        sections.splice(i, 1);
-        sections.push(element);
-        sections = sections;
-        keys[key] = element;
-        keyboard.push(key);
-        keyboard = keyboard;
-      }
+    if (key === "" || key === " "){
+      window.alert("Please enter a key");
     }
-    changeKeyModal = false;
+    // search for card selected
+    else if (!keyboard.includes(key)){
+      for(let i = 0; i < sections.length; i++){
+        if(sections[i].name === cardPressed){
+
+          // get the old key
+          let oldKey = sections[i].key;
+          
+          // create new element with new key
+          let element = {"sound": sections[i].sound, "name": sections[i].name, "key": key}
+          // delete previous element
+          sections.splice(i, 1);
+          // add new element
+          sections.push(element);
+          sections = sections;
+
+          // delete previous key from dictionary
+          delete keys[oldKey];
+          // associate new key to element in the dictionary
+          keys[key] = element;
+          keys = keys;
+
+          // delete previous key from keyboard
+          keyboard.splice(i, 1);
+          // add new key to keyboard
+          keyboard.push(key);
+          keyboard = keyboard;
+          
+        }
+      }
+      // close modal
+      changeKeyModal = false;
+    } else {
+      window.alert("Key already in use");
+    }
+    
+    
   }
 
+  // record a sound
   let media = [];
   let mediaRecorder = null;
   onMount(async () => {
@@ -151,17 +214,24 @@
     }
   })
 
+  // start recording
   function startRecording(){ 
     isActive = true;
     mediaRecorder.start()
-   }
+  }
+
+  // stop recording
   function stopRecording() {
     isActive = false;
     mediaRecorder.stop() 
-    }
+  }
 
+  // check if safe mode was passed
   function safeMode(){
+    // @ts-ignore
     let answer = document.getElementById("safeMode").value 
+
+    // if answer is correct, show new card modal, if not close
     if (answer === "Add New Card"){
       showModal = false;
       newCardModal = true;
@@ -170,20 +240,30 @@
       showModal = false;
     }
   }
+
+  // add sound to cards
   function addSound(){
+
+    // get name, key and sound from form
+    // @ts-ignore
     let name = document.getElementById("name").value
+    // @ts-ignore
     let key = document.getElementById("key").value 
     let sound = document.getElementById("x")
-    console.log(sound);
+
+    // if all values are not null
     if (name != '' && key != '' && sound != null){
+      // if key is available create element and add new sound
       if (!keyboard.includes(key)){
         let element = {"sound": sound, "name": name, "key": key}
+        // @ts-ignore
         sections.push(element);
         sections = sections;
         keys[key] = element;
         keyboard.push(key);
         keyboard = keyboard;
         newCardModal = false;
+      // if key is not available, alert
       } else {
         window.alert("Key already in use");
       }
@@ -195,11 +275,12 @@
   
 </script>
 
+<!-- Add a new card -->
 <div>
   <button on:click={() => showModal = true}>Add new card</button>
 </div>
 
-
+<!-- Show all sounds in the list -->
 <div class='container'>
   {#each sections as sound}
     <div 
@@ -213,6 +294,7 @@
   {/each}
 </div>
 
+<!-- Show Logs -->
 <div class='logs_container'>
   {#each previousEntries as entry, index}
     {#if index === 0}
@@ -251,6 +333,7 @@
   {/each}
 </div>
 
+<!-- Modal: starts with a safe mode -->
 {#if showModal}
   <Modal on:close="{()=> showModal = false}">
     <p>Type the next word to add a new card: "Add New Card"</p>
@@ -258,6 +341,7 @@
     <button on:click={safeMode}>Next</button>
   </Modal>
 {/if}
+<!-- Modal: add a new card form -->
 {#if newCardModal}
 	<Modal on:close="{() => newCardModal = false}">
     <label for="name">Sound name</label>
@@ -282,11 +366,10 @@
       <audio controls />
       <button on:click={addSound}>Add</button>
     </div>
-    
-
 	</Modal>
 {/if}
 
+<!-- Modal: modify or delete card -->
 {#if showModifyModal}
   <Modal on:close="{() => showModifyModal = false}">
     <button on:click={() => changeKeyModal = true}
@@ -295,6 +378,7 @@
             on:click={() => showModifyModal = false}>Delete card</button>
   </Modal>
 {/if}
+<!-- Modal: change key associated with card -->
 {#if changeKeyModal}
     <Modal on:close="{() => changeKeyModal = false}">
       <p>Change key</p>
@@ -302,13 +386,14 @@
       <input type="text" id="newkey" name="key" maxlength="1">
       <button on:click={() => changeKey()}>Accept</button>
     </Modal>
-  {:else if showDeleteModal}
-    <Modal on:close="{() => showDeleteModal = false}">
-      <p>Delete card?</p>
-      <button on:click={() => deleteCard()}>Yes</button>
-      <button on:click={() => showDeleteModal = false}>No</button>
-    </Modal>
-  {/if}
+<!-- Modal: delete card -->
+{:else if showDeleteModal}
+  <Modal on:close="{() => showDeleteModal = false}">
+    <p>Delete card?</p>
+    <button on:click={() => deleteCard()}>Yes</button>
+    <button on:click={() => showDeleteModal = false}>No</button>
+  </Modal>
+{/if}
 
 <style>
 
