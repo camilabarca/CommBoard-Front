@@ -10,8 +10,20 @@
     import { db } from "./firebase/firebase";
     import { doc, getDoc, setDoc } from "firebase/firestore";
     import Header from "./Header.svelte";
+    import Modal from "./Modal.svelte";
+    import { onMount } from 'svelte';
 
     let firebaseUser = null;
+
+    let settingsModal = false;
+
+    let pressStartTime = null;
+    let buttonPressed = false;
+    let timer = null;
+
+    let logPressStartTime = null;
+    let logButtonPressed = false;
+    let logTimer = null;
 
     onAuthStateChanged(auth, (user) => {
         firebaseUser = user;
@@ -43,20 +55,85 @@
         console.log(firebaseUser);
     }
 
+    function handleButtonPress() {
+        if (!buttonPressed) {
+            pressStartTime = Date.now();
+            buttonPressed = true;
+
+            timer = setInterval(() => {
+                if (buttonPressed && Date.now() - pressStartTime >= 3000) {
+                settingsModal = true;
+                clearInterval(timer);
+                }
+            }, 100);
+        }
+    }
+
+    function handleButtonRelease() {
+        buttonPressed = false;
+        clearInterval(timer);
+    }
+
+    function handleLoginButtonPress(){
+        if (!logButtonPressed) {
+            logPressStartTime = Date.now();
+            logButtonPressed = true;
+
+            logTimer = setInterval(() => {
+                if (logButtonPressed && Date.now() - logPressStartTime >= 3000) {
+                login();
+                clearInterval(logTimer);
+                }
+            }, 100);
+        }
+    }
+
+    function handleLogoutButtonPress(){
+        if (!logButtonPressed) {
+            logPressStartTime = Date.now();
+            logButtonPressed = true;
+
+            logTimer = setInterval(() => {
+                if (logButtonPressed && Date.now() - logPressStartTime >= 3000) {
+                logout();
+                clearInterval(logTimer);
+                }
+            }, 100);
+        }
+    }
+
+    function handleLogButtonRelease() {
+        logButtonPressed = false;
+        clearInterval(logTimer);
+    }
+
 </script>
  <main>
     <Header title="InCA CommBoard">
         <div>
             {#if firebaseUser}
-                <button on:click={logout} class="btn btn-primary">Logout</button>
+                <button on:mousedown={handleLogoutButtonPress} on:mouseup={handleLogButtonRelease} class="btn btn-primary">Logout</button>
             {:else}
-                <button on:click={login} class="btn btn-secondary"
+                <button on:mousedown={handleLoginButtonPress} on:mouseup={handleLogButtonRelease} class="btn btn-secondary"
                     >Login with Google</button
                 >
             {/if}
         </div>
+        <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings</button>
     </Header>
-
-    
     <Commboard firebaseUser ={firebaseUser}/>
+    {#if settingsModal}
+    <Modal on:close="{()=> settingsModal = false}">
+        <div>
+            <p>Guardian Name</p>
+            <input type="text" id="guardianName" name="guardianName">
+            <p>Subject Name</p>
+            <input type="text" id="subjectName" name="subjectName">
+        </div>
+        <div>
+            <button>Save</button>
+        </div>
+        
+    </Modal>
+    {/if}
 </main>

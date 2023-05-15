@@ -7,7 +7,11 @@
       <h1>{title}</h1>
     </div>
     <div class="right">
-        <slot></slot>
+        <h3>Hold buttons for 3 seconds to activate</h3>
+        <div class="button-container">
+          <slot></slot>
+        </div>
+    </div>
   </header>
   
   <style>
@@ -24,6 +28,13 @@
     }
   
     .right {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .button-container {
       display: flex;
       gap: 10px;
     }
