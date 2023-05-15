@@ -35,10 +35,10 @@
 
   let keyboard = ["k", "m", "o", "p"];
 
-  let sections = [{"sound": new Audio('./../sounds/no.mp3'), "name": "No", "key": "k"},
-                  {"sound": new Audio('./../sounds/yes.mp3'), "name": "Yes", "key": "m"},
-                  {"sound": new Audio('./../sounds/drink.mp3'), "name": "Drink", "key": "o"},
-                  {"sound": new Audio('./../sounds/eat.mp3'), "name": "Eat", "key": "p"}]
+  let sections = [{"sound": new Audio('./sounds/no.mp3'), "name": "No", "key": "k"},
+                  {"sound": new Audio('./sounds/yes.mp3'), "name": "Yes", "key": "m"},
+                  {"sound": new Audio('./sounds/drink.mp3'), "name": "Drink", "key": "o"},
+                  {"sound": new Audio('./sounds/eat.mp3'), "name": "Eat", "key": "p"}]
   
   let keys = {"k": sections[0], "m": sections[1], "o": sections[2], "p": sections[3]};
 
