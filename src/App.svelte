@@ -25,6 +25,9 @@
     let logButtonPressed = false;
     let logTimer = null;
 
+    let guardian = null;
+    let subject = null;
+
     onAuthStateChanged(auth, (user) => {
         firebaseUser = user;
     });
@@ -107,6 +110,12 @@
         clearInterval(logTimer);
     }
 
+    function saveGuardianAndSubject(){
+        guardian = document.getElementById("guardianName").value;
+        subject = document.getElementById("subjectName").value; 
+        settingsModal = false;
+    }
+
 </script>
  <main>
     <Header title="InCA CommBoard">
@@ -121,7 +130,13 @@
         </div>
         <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings</button>
     </Header>
-    <Commboard firebaseUser ={firebaseUser}/>
+    {#if guardian}
+        <p>{guardian}</p>    
+    {/if}
+    {#if subject}
+        <p>{subject}</p>
+    {/if}
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal}/>
     {#if settingsModal}
     <Modal on:close="{()=> settingsModal = false}">
         <div>
@@ -131,9 +146,8 @@
             <input type="text" id="subjectName" name="subjectName">
         </div>
         <div>
-            <button>Save</button>
-        </div>
-        
+            <button on:click={saveGuardianAndSubject}>Save</button>
+        </div>    
     </Modal>
     {/if}
 </main>

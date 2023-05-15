@@ -5,22 +5,34 @@
   import { database } from "./firebase/firebase";
 
   export let firebaseUser;
+  export let guardianName;
+  export let subjectName;
+  export let settingsModal;
   
 
   const d = new Date();
 
-  function sendData(date, sound, subject) {
-    let guardian = firebaseUser;
-    if (!guardian) {
+  function sendData(date, sound) {
+    let user = firebaseUser;
+    let guardian = guardianName;
+    let subject = subjectName;
+    if (!guardian){
       guardian = "Anonymous"
+    } 
+    if (!subject){
+      subject = "Anonymous"
+    }
+    if (!user) {
+      user = "Anonymous"
     } else {
-      guardian = firebaseUser.email;
+      user = firebaseUser.email;
     }
     const data = {
       date: date,
       sound: sound,
       subject: subject, 
-      guardian: guardian
+      guardian: guardian,
+      user: user
     };
 
     // Push the data to the "interactions" node in the database
@@ -50,7 +62,7 @@
       let date = new Date();
 
       // send data with date, sound name and subject
-      sendData(date.toLocaleString(), sound.name, 'sujeto');
+      sendData(date.toLocaleString(), sound.name);
       // @ts-ignore
       // if right click, don´t play sound
       if (window.event.which === 3){
@@ -78,7 +90,7 @@
 
   function documentKeyDown(e) {
     // if the key is not in the dictionary, ignore (no sound associated)
-    if (!keys[e.key]) {
+    if (!keys[e.key] || showModal || showDeleteModal || showModifyModal || changeKeyModal || newCardModal || settingsModal) {
       return;
     } 
     // get file and name associated to key
