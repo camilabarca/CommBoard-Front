@@ -39,7 +39,7 @@
 
 <svelte:window on:keydown={handle_keydown}/>
 
-<div class="modal-background" on:click={close}></div>
+<div class="modal-background" on:click={close} on:keydown={handle_keydown}></div>
 
 <div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
 	<slot name="header"></slot>

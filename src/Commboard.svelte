@@ -54,6 +54,10 @@
   
   let keys = {"k": sections[0], "m": sections[1], "o": sections[2], "p": sections[3]};
 
+  let pressStartTime = null;
+  let buttonPressed = false;
+  let timer = null;
+
 
   const audio = new Audio();
 
@@ -284,12 +288,31 @@
     
     
   }
+
+  function handleButtonPress() {
+      if (!buttonPressed) {
+          pressStartTime = Date.now();
+          buttonPressed = true;
+
+          timer = setInterval(() => {
+              if (buttonPressed && Date.now() - pressStartTime >= 3000) {
+              newCardModal = true;
+              clearInterval(timer);
+              }
+          }, 100);
+      }
+  }
+
+  function handleButtonRelease() {
+      buttonPressed = false;
+      clearInterval(timer);
+  }
   
 </script>
 
 <!-- Add a new card -->
 <div class="addCardContainer">
-  <button on:click={() => showModal = true} class='addCard'>Add new card</button>
+  <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Add new card (Hold for 3 seconds)</button>
 </div>
 
 <!-- Show all sounds in the list -->
@@ -526,23 +549,22 @@
 
   .sound-button {
         position: relative;
-        background-color: azure;
+        background-color: #eaeaea;
         display: inline-flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        outline: 1px solid #000f08;
+        outline: 1px solid #000000;
         font-size: 2.5vmin;
         cursor: pointer;
-        box-shadow: 5px 5px 5px #000f08;
-        transition: background 0.25s linear, color 0.25s linear,
-        box-shadow 0.15s linear;
+        box-shadow: 5px 5px 5px #000000;
+        transition: background 0.25s linear, color 0.25s linear, box-shadow 0.15s linear;
         text-transform: uppercase;
     }
 
     .sound-button:hover {
-        background: rgb(140, 140, 212);
-        color: #000f08 !important;
+        background: #003366;
+        color: #ffffff !important;
     }
 
     .key{
@@ -563,6 +585,7 @@
     }
 
     .addCardContainer {
+      margin-bottom: 10px;
       display: flex;
       justify-content: center;
     }

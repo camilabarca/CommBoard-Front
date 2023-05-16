@@ -130,12 +130,22 @@
         </div>
         <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings</button>
     </Header>
-    {#if guardian}
-        <p>{guardian}</p>    
-    {/if}
-    {#if subject}
-        <p>{subject}</p>
-    {/if}
+    <div class="info-box">
+        <div class="info-row">
+            <span class="label">Guardian:</span>
+            {#if guardian} 
+                <p>{guardian}</p>
+            {/if}
+        </div>
+        
+        <div class="info-row">
+            <span class="label">Subject:</span>
+            {#if subject}
+                <p>{subject}</p>
+            {/if}
+        </div>
+        
+    </div>
     <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal}/>
     {#if settingsModal}
     <Modal on:close="{()=> settingsModal = false}">
@@ -151,3 +161,31 @@
     </Modal>
     {/if}
 </main>
+
+<style>
+    .info-box {
+    margin-top: 10px;
+    top: 20px;
+    left: 20px;
+    max-width: 20%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+    }
+
+    .info-row {
+    display: flex;
+    align-items: center;
+    }
+
+    .label {
+    font-weight: bold;
+    margin-right: 5px;
+    }
+
+    p {
+    margin: 0;
+    }
+
+</style>
