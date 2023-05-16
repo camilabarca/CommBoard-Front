@@ -580,9 +580,6 @@
       transform: translate(5px, 5px);
       box-shadow: none;
     }
-    .addCard {
-      margin: 10px
-    }
 
     .addCardContainer {
       margin-bottom: 10px;
