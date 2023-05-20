@@ -314,6 +314,12 @@
       buttonPressed = false;
       clearInterval(timer);
   }
+
+  function handleContextMenu(event, card) {
+    event.preventDefault();
+    showModifyModal = true;
+    cardPressed = card;
+  }
   
 </script>
 
@@ -327,7 +333,7 @@
   {#each sections as sound}
     <div 
       class='sound-button' on:mousedown={() => playSound(sound)} 
-      on:contextmenu={() => showModifyModal=true}
+      on:contextmenu={(event) => handleContextMenu(event, sound.name)}
       class:sound-button-active={currentSound === sound.name}
       >
       <h4>{sound.name}</h4>
