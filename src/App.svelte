@@ -16,14 +16,11 @@
     let firebaseUser = null;
 
     let settingsModal = false;
+    let newCardModal = false;
 
     let pressStartTime = null;
     let buttonPressed = false;
     let timer = null;
-
-    let logPressStartTime = null;
-    let logButtonPressed = false;
-    let logTimer = null;
 
     let guardian = null;
     let subject = null;
@@ -77,106 +74,90 @@
         clearInterval(timer);
     }
 
-    function handleLoginButtonPress(){
-        if (!logButtonPressed) {
-            logPressStartTime = Date.now();
-            logButtonPressed = true;
-
-            logTimer = setInterval(() => {
-                if (logButtonPressed && Date.now() - logPressStartTime >= 3000) {
-                login();
-                clearInterval(logTimer);
-                }
-            }, 100);
-        }
-    }
-
-    function handleLogoutButtonPress(){
-        if (!logButtonPressed) {
-            logPressStartTime = Date.now();
-            logButtonPressed = true;
-
-            logTimer = setInterval(() => {
-                if (logButtonPressed && Date.now() - logPressStartTime >= 3000) {
-                logout();
-                clearInterval(logTimer);
-                }
-            }, 100);
-        }
-    }
-
-    function handleLogButtonRelease() {
-        logButtonPressed = false;
-        clearInterval(logTimer);
-    }
-
     function saveGuardianAndSubject(){
         guardian = document.getElementById("guardianName").value;
         subject = document.getElementById("subjectName").value; 
         settingsModal = false;
     }
 
+    function addNewCard(){
+        newCardModal = true;
+        settingsModal = false;
+    }
+
 </script>
  <main>
     <Header title="InCA CommBoard">
-        <div>
-            {#if firebaseUser}
-                <button on:mousedown={handleLogoutButtonPress} on:mouseup={handleLogButtonRelease} class="btn btn-primary">Logout</button>
-            {:else}
-                <button on:mousedown={handleLoginButtonPress} on:mouseup={handleLogButtonRelease} class="btn btn-secondary"
-                    >Login with Google</button
-                >
-            {/if}
+        <div slot="info">
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Guardian:</span>
+                    {#if guardian} 
+                        <p>{guardian}</p>
+                    {/if}
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Subject:</span>
+                    {#if subject}
+                        <p>{subject}</p>
+                    {/if}
+                </div>
+        
+                <div class="info-row">
+                    <span class="label">User:</span>
+                    {#if firebaseUser}
+                        <p>{firebaseUser.email}</p>
+                    {/if}
+                </div>
+            </div>
         </div>
-        <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings</button>
+        <div slot="buttons">
+            <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings (Hold for 3 seconds)</button>
+        </div>
     </Header>
-    <div class="info-box">
-        <div class="info-row">
-            <span class="label">Guardian:</span>
-            {#if guardian} 
-                <p>{guardian}</p>
-            {/if}
-        </div>
-        
-        <div class="info-row">
-            <span class="label">Subject:</span>
-            {#if subject}
-                <p>{subject}</p>
-            {/if}
-        </div>
-        
-    </div>
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal}/>
+    
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} newCardModal={newCardModal}/>
     {#if settingsModal}
-    <Modal on:close="{()=> settingsModal = false}">
-        <div>
-            <p>Guardian Name</p>
+    <Modal on:close={() => settingsModal = false}>
+        <div class="modal-content">
+          <div class="input-group">
+            <label for="guardianName">Guardian Name</label>
             <input type="text" id="guardianName" name="guardianName">
-            <p>Subject Name</p>
+          </div>
+          <div class="input-group">
+            <label for="subjectName">Subject Name</label>
             <input type="text" id="subjectName" name="subjectName">
-        </div>
-        <div>
+          </div>
+          <div class="button-group">
+            {#if firebaseUser}
+              <button on:click={logout} class="btn">Logout</button>
+            {:else}
+              <button on:click={login} class="btn">Login with Google</button>
+            {/if}
+          </div>
+          <div class="button-group">
+            <button on:click={addNewCard}>Add new card</button>
+          </div>
+          <div class="button-group">
             <button on:click={saveGuardianAndSubject}>Save</button>
-        </div>    
-    </Modal>
+          </div>
+        </div>
+      </Modal>
     {/if}
 </main>
 
 <style>
     .info-box {
-    margin-top: 10px;
-    top: 20px;
-    left: 20px;
-    max-width: 20%;
-    border: 1px solid #ccc;
-    padding: 10px;
-    background-color: #f8f8f8;
-    border-radius: 4px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 4px;
     }
 
     .info-row {
-    display: flex;
-    align-items: center;
+        display: flex;
+        align-items: center;
     }
 
     .label {
@@ -186,6 +167,43 @@
 
     p {
     margin: 0;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .input-group {
+        margin-bottom: 10px;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .button-group {
+        margin-bottom: 10px;
+    }
+
+    .button-group button {
+        padding: 10px 20px;
+        background-color: #f0f0f0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        background-color: gray;
+        color: black;
     }
 
 </style>

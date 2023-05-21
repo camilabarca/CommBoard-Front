@@ -8,6 +8,7 @@
   export let guardianName;
   export let subjectName;
   export let settingsModal;
+  export let newCardModal;
   
 
   const d = new Date();
@@ -143,7 +144,6 @@
   let showDeleteModal = false;
   let showModifyModal = false;
   let changeKeyModal = false;
-  let newCardModal = false;
 
   // delete a card
   function deleteCard(){
@@ -275,15 +275,16 @@
     let sound = document.getElementById("x")
 
     // if all values are not null
-    if (name != '' && key != '' && sound != null){
+    let key_lowercase = key.toLowerCase();
+    if (name != '' && key_lowercase != '' && sound != null){
       // if key is available create element and add new sound
-      if (!keyboard.includes(key)){
-        let element = {"sound": sound, "name": name, "key": key}
+      if (!keyboard.includes(key_lowercase)){
+        let element = {"sound": sound, "name": name, "key": key_lowercase}
         // @ts-ignore
         sections.push(element);
         sections = sections;
-        keys[key] = element;
-        keyboard.push(key);
+        keys[key_lowercase] = element;
+        keyboard.push(key_lowercase);
         keyboard = keyboard;
         newCardModal = false;
       // if key is not available, alert
@@ -322,11 +323,6 @@
   }
   
 </script>
-
-<!-- Add a new card -->
-<div class="addCardContainer">
-  <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Add new card (Hold for 3 seconds)</button>
-</div>
 
 <!-- Show all sounds in the list -->
 <div class='container'>

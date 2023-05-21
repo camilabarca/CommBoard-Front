@@ -6,11 +6,14 @@
     <div class="left">
       <h1>{title}</h1>
     </div>
-    <div class="right">
-        <h3>Hold buttons for 3 seconds to activate</h3>
+    
+    <div class="middle">
         <div class="button-container">
-          <slot></slot>
+          <slot name="buttons"></slot>
         </div>
+    </div>
+    <div class="right">
+      <slot name="info"></slot>
     </div>
   </header>
   
@@ -21,6 +24,8 @@
       align-items: center;
       padding: 10px;
       background-color: #f0f0f0;
+      height: 100px;
+      margin-bottom: 10px;
     }
   
     .left {
@@ -37,6 +42,12 @@
     .button-container {
       display: flex;
       gap: 10px;
+    }
+
+    .middle {
+      flex-grow: 1;
+      display: flex;
+      justify-content: flex-start;
     }
   </style>
   
