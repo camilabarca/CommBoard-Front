@@ -16,7 +16,6 @@
     let firebaseUser = null;
 
     let settingsModal = false;
-    let newCardModal = false;
 
     let pressStartTime = null;
     let buttonPressed = false;
@@ -75,13 +74,10 @@
     }
 
     function saveGuardianAndSubject(){
+        // @ts-ignore
         guardian = document.getElementById("guardianName").value;
+        // @ts-ignore
         subject = document.getElementById("subjectName").value; 
-        settingsModal = false;
-    }
-
-    function addNewCard(){
-        newCardModal = true;
         settingsModal = false;
     }
 
@@ -117,7 +113,7 @@
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} newCardModal={newCardModal}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal}/>
     {#if settingsModal}
     <Modal on:close={() => settingsModal = false}>
         <div class="modal-content">
@@ -135,9 +131,6 @@
             {:else}
               <button on:click={login} class="btn">Login with Google</button>
             {/if}
-          </div>
-          <div class="button-group">
-            <button on:click={addNewCard}>Add new card</button>
           </div>
           <div class="button-group">
             <button on:click={saveGuardianAndSubject}>Save</button>
@@ -199,11 +192,6 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-    }
-
-    .btn-secondary {
-        background-color: gray;
-        color: black;
     }
 
 </style>

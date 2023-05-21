@@ -8,7 +8,7 @@
   export let guardianName;
   export let subjectName;
   export let settingsModal;
-  export let newCardModal;
+  let newCardModal = false;
   
 
   const d = new Date();
@@ -324,6 +324,7 @@
   
 </script>
 
+<button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Add new card</button>
 <!-- Show all sounds in the list -->
 <div class='container'>
   {#each sections as sound}
@@ -588,11 +589,5 @@
       color: #000f08 !important;
       transform: translate(5px, 5px);
       box-shadow: none;
-    }
-
-    .addCardContainer {
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: center;
     }
 </style>

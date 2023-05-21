@@ -32,6 +32,7 @@
 
 	if (previously_focused) {
 		onDestroy(() => {
+			// @ts-ignore
 			previously_focused.focus();
 		});
 	}
