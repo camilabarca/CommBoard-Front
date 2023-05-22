@@ -286,7 +286,6 @@
         keys[key_lowercase] = element;
         keyboard.push(key_lowercase);
         keyboard = keyboard;
-        closeCardModal();
       // if key is not available, alert
       } else {
         window.alert("Key already in use");
@@ -547,6 +546,15 @@
     justify-content: space-around;
     flex-wrap: wrap;
     padding: 10px;
+  }
+  .logs_container div {
+    margin-top: 30px;
+    font-size: 14px;
+    line-height: 5px;
+  }
+  .logs_container select, 
+  .logs_container p {
+    font-size: 12px;
   }
   .container {
     width: 100vmin;
