@@ -286,7 +286,7 @@
         keys[key_lowercase] = element;
         keyboard.push(key_lowercase);
         keyboard = keyboard;
-        newCardModal = false;
+        closeCardModal();
       // if key is not available, alert
       } else {
         window.alert("Key already in use");
@@ -321,10 +321,13 @@
     showModifyModal = true;
     cardPressed = card;
   }
-  
+
+  export let addCardModal;
+  export let closeCardModal;
+
 </script>
 
-<button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Add new card</button>
+
 <!-- Show all sounds in the list -->
 <div class='container'>
   {#each sections as sound}
@@ -387,8 +390,8 @@
   </Modal>
 {/if}
 <!-- Modal: add a new card form -->
-{#if newCardModal}
-	<Modal on:close="{() => newCardModal = false}">
+{#if addCardModal}
+	<Modal on:close={closeCardModal}>
     <label for="name">Sound name</label>
     <input type="text" id="name" name="name">
     <br>

@@ -81,6 +81,15 @@
         settingsModal = false;
     }
 
+    let addCardModal = false;
+    function openCardModal(){
+        addCardModal = true;
+        settingsModal = false;
+    }
+    function closeCardModal(){
+        addCardModal = false;
+    }
+
 </script>
  <main>
     <Header title="InCA CommBoard">
@@ -113,7 +122,7 @@
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal}/>
     {#if settingsModal}
     <Modal on:close={() => settingsModal = false}>
         <div class="modal-content">
@@ -131,6 +140,9 @@
             {:else}
               <button on:click={login} class="btn">Login with Google</button>
             {/if}
+          </div>
+          <div class="button-group">
+            <button on:click={openCardModal}>Add New Card</button>
           </div>
           <div class="button-group">
             <button on:click={saveGuardianAndSubject}>Save</button>
