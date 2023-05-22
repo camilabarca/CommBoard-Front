@@ -102,7 +102,7 @@
 
   function documentKeyDown(e) {
     // if the key is not in the dictionary, ignore (no sound associated)
-    if (!keys[e.key] || showModal || showDeleteModal || showModifyModal || changeKeyModal || newCardModal || settingsModal) {
+    if (!keys[e.key] || showModal || showDeleteModal || showModifyModal || changeKeyModal || addCardModal || settingsModal) {
       return;
     } 
     // get file and name associated to key
