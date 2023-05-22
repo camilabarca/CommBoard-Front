@@ -286,6 +286,8 @@
         keys[key_lowercase] = element;
         keyboard.push(key_lowercase);
         keyboard = keyboard;
+        document.getElementById("name").value = "";
+        document.getElementById("key").value = "";
       // if key is not available, alert
       } else {
         window.alert("Key already in use");
