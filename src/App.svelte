@@ -16,10 +16,15 @@
     let firebaseUser = null;
 
     let settingsModal = false;
+    let logsModal = false;
 
     let pressStartTime = null;
     let buttonPressed = false;
     let timer = null;
+
+    let logPressStartTime = null;
+    let logButtonPressed = false;
+    let logTimer = null;
 
     let guardian = null;
     let subject = null;
@@ -54,6 +59,24 @@
         signOut(auth);
         firebaseUser = null;
         console.log(firebaseUser);
+    }
+
+    function handleLogButtonPress() {
+        if (!logButtonPressed) {
+            logPressStartTime = Date.now();
+            logButtonPressed = true;
+
+            logTimer = setInterval(() => {
+                if (logButtonPressed && Date.now() - logPressStartTime >= 3000) {
+                logsModal = true;
+                clearInterval(logTimer);
+                }
+            }, 100);
+        }
+    }
+    function handleLogButtonRelease() {
+        logButtonPressed = false;
+        clearInterval(logTimer);
     }
 
     function handleButtonPress() {
@@ -92,6 +115,10 @@
         addCardModal = false;
     }
 
+    function closeLogModal(){
+        logsModal = false;
+    }
+
 </script>
  <main>
     <Header title="InCA CommBoard">
@@ -121,10 +148,11 @@
         </div>
         <div slot="buttons">
             <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings (Hold for 3 seconds)</button>
+            <button on:mousedown={handleLogButtonPress} on:mouseup={handleLogButtonRelease}>Local Logs (Hold for 3 seconds)</button>
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} logsModal={logsModal} {closeLogModal}/>
     {#if settingsModal}
     <Modal on:close={() => settingsModal = false}>
         <div class="modal-content">

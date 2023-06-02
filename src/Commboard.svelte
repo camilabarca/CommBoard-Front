@@ -11,8 +11,11 @@
   export let subjectName;
   export let settingsModal;
   export let sintesizedVoice;
-  export let lang
+  export let lang;
+  export let logsModal;
   let newCardModal = false;
+
+  let shiftPressed = false;
 
   let commBoardState = {};
   
@@ -170,7 +173,7 @@
       }
       // @ts-ignore
       // if control was pressed, the intention was modeled by guardian
-      if (window.event.shiftKey){
+      if (window.event.shiftKey || shiftPressed){
         intention = "Modeling by Guardian"
       }
 
@@ -210,7 +213,7 @@
     } = keys[key];
     
     // if control is pressed play sound and set intention do modeled by guardian
-    if(e.shiftKey){
+    if(e.shiftKey || shiftPressed){
       playSound(keys[key], "Modeling by Guardian");
       currentSound = name;
     // else, just play souns
@@ -444,11 +447,24 @@
     cardPressed = card;
   }
 
+  function handleShiftClick() {
+    shiftPressed = true;
+  }
+
+  function handleShiftRelease(){
+    shiftPressed = false;
+
+  }
+
   export let addCardModal;
   export let closeCardModal;
+  export let closeLogModal;
 
 </script>
 
+<div>
+  <button on:mousedown={handleShiftClick} on:mouseup={handleShiftRelease}>Shift</button>
+</div>
 
 <!-- Show all sounds in the list -->
 <div class='container'>
@@ -464,44 +480,43 @@
   {/each}
 </div>
 
-<!-- Show Logs -->
-<div class='logs_container'>
-  {#each previousEntries as entry, index}
-    {#if index === 0}
-      <div class='selected'>
-        <p>{entry.name}</p>
-        <p>{entry.time}</p>
-        {#if entry.intention === null}
-          <select id={index.toString()} on:change={() => logSelected(index)}>
-            <option value='' selected>-----</option>
-            <option value='Modeling by Guardian'>Modeling by Guardian</option>
-            <option value='Non intentional'>Non intentional</option>
-            <option value='Intentional but unclear meaning'>Intentional but unclear meaning</option>
-            <option value='Intentional and clear meaning'>Intentional and clear meaning</option>
-          </select>
-        {:else}
-          <p>{entry.intention}</p>
-        {/if}
-      </div> 
-    {:else}
-      <div>
-        <p>{entry.name}</p>
-        <p>{entry.time}</p>
-        {#if entry.intention === null}
-          <select id={index.toString()} on:change={() => logSelected(index)}>
-            <option value='' selected>-----</option>
-            <option value='Modeling by Guardian'>Modeling by Guardian</option>
-            <option value='Non intentional'>Non intentional</option>
-            <option value='Intentional but unclear meaning'>Intentional but unclear meaning</option>
-            <option value='Intentional and clear meaning'>Intentional and clear meaning</option>
-          </select>
-        {:else}
-          <p>{entry.intention}</p>
-        {/if}
-      </div>
-    {/if} 
-  {/each}
-</div>
+
+{#if logsModal}
+<Modal on:close={closeLogModal}>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Time</th>
+        <th>Intention</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each previousEntries as entry, index}
+      <tr class={index === 0 ? "last-entry" : ""}>
+        <td>{entry.name}</td>
+        <td>{entry.time}</td>
+        <td>
+          {#if entry.intention === null}
+            <select id={index.toString()} on:change={() => logSelected(index)}>
+              <option value='' selected>-----</option>
+              <option value='Modeling by Guardian'>Modeling by Guardian</option>
+              <option value='Non intentional'>Non intentional</option>
+              <option value='Intentional but unclear meaning'>Intentional but unclear meaning</option>
+              <option value='Intentional and clear meaning'>Intentional and clear meaning</option>
+            </select>
+          {:else}
+            {entry.intention}
+          {/if}
+        </td>
+      </tr>
+      {/each}
+    </tbody>
+  </table>
+</Modal>
+{/if}
+
+
 
 <!-- Modal: starts with a safe mode -->
 {#if showModal}
@@ -727,5 +742,23 @@
       color: #000f08 !important;
       transform: translate(5px, 5px);
       box-shadow: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+    .last-entry {
+      background-color: #f5f5f5;
     }
 </style>
