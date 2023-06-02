@@ -23,6 +23,8 @@
 
     let guardian = null;
     let subject = null;
+    let sintesizedVoice = true;
+    let lang = 'en-US'
 
     onAuthStateChanged(auth, (user) => {
         firebaseUser = user;
@@ -122,7 +124,7 @@
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang}/>
     {#if settingsModal}
     <Modal on:close={() => settingsModal = false}>
         <div class="modal-content">
@@ -134,6 +136,20 @@
             <label for="subjectName">Subject Name</label>
             <input type="text" id="subjectName" name="subjectName">
           </div>
+          <div class="toggle-group">
+            <label for="synthesizedVoice">Do you want to record your own sounds or use a synthesized voice? (This sounds will not be saved in your account)</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="synthesizedVoice" name="synthesizedVoice" checked={!sintesizedVoice} on:change={() => sintesizedVoice = !event.target.checked}>
+              <label for="synthesizedVoice"></label>
+            </div>
+          </div>
+        <div class="input-group">
+            <label for="language">Select Sound Language:</label>
+            <select id="language" name="language" bind:value={lang}>
+                <option value="en-US">English</option>
+                <option value="es-ES">Spanish</option>
+            </select>
+        </div>
           <div class="button-group">
             {#if firebaseUser}
               <button on:click={logout} class="btn">Logout</button>
@@ -205,5 +221,56 @@
         border-radius: 4px;
         cursor: pointer;
     }
+
+    .toggle-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-switch label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150%;
+        height: 100%;
+        background-color: #ccc;
+        border-radius: 34px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .toggle-switch label:before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: #fff;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.3s ease;
+    }
+
+    .toggle-switch input:checked + label {
+        background-color: #69C779;
+    }
+    .toggle-switch input:checked + label:before {
+        transform: translateX(16px);
+    }
+
 
 </style>

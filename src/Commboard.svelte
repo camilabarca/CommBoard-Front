@@ -3,15 +3,19 @@
   import Modal from './Modal.svelte';
   import { onMount } from 'svelte'
   import { auth, database } from "./firebase/firebase";
-  import { db } from "./firebase/firebase"
+  import { db, storage } from "./firebase/firebase"
+
 
   export let firebaseUser;
   export let guardianName;
   export let subjectName;
   export let settingsModal;
+  export let sintesizedVoice;
+  export let lang
   let newCardModal = false;
 
   let commBoardState = {};
+  
   
 
   const d = new Date();
@@ -89,18 +93,20 @@
 
   auth.onAuthStateChanged((user) => {
     if(user) {
-      const userId = user.uid;
-      db.collection('commBoardStates').doc(userId).get()
-      .then((snapshot) => {
-        if (snapshot && snapshot.exists) {
-          const serializedState = snapshot.data().commBoardState;
-          commBoardState = deserializeState(serializedState);
-          keyboard = commBoardState['keyboard'];
-          keys = commBoardState['keys'];
-          sections = commBoardState['sections'];
-          console.log(commBoardState);
-        }
-      })
+      if (sintesizedVoice){
+        const userId = user.uid;
+        db.collection('commBoardStates').doc(userId).get()
+        .then((snapshot) => {
+          if (snapshot && snapshot.exists) {
+            const serializedState = snapshot.data().commBoardState;
+            commBoardState = deserializeState(serializedState);
+            keyboard = commBoardState['keyboard'];
+            keys = commBoardState['keys'];
+            sections = commBoardState['sections'];
+          }
+        })
+      }
+      
     } else {
       keyboard = ["k", "m", "o", "p"];
 
@@ -123,13 +129,13 @@
         keyboard: commBoardState['keyboard'],
         keys: Object.keys(commBoardState['keys']).map((key) => ({
           [key]: {
-            sound: commBoardState['keys'][key].sound.src,
+            sound: commBoardState['keys'][key].sound,
             name: commBoardState['keys'][key].name,
             key: commBoardState['keys'][key].key
           }
         })),
         sections: commBoardState['sections'].map((section) => ({
-          sound: section.sound.src,
+          sound: section.sound,
           name: section.name,
           key: section.key
         }))
@@ -164,12 +170,22 @@
       }
       // @ts-ignore
       // if control was pressed, the intention was modeled by guardian
-      if (window.event.ctrlKey){
+      if (window.event.shiftKey){
         intention = "Modeling by Guardian"
       }
-      
+
       // play sound
-      sound.sound.play();
+      if (sintesizedVoice || sound.sound === ''){
+        const speechSynthesis = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(sound.name);
+        utterance.lang = lang;
+        speechSynthesis.speak(utterance);
+      }
+      
+      else{
+        sound.sound.play();
+      }
+      
 
       // add played sound to previous entries
       previousEntries.unshift({name: sound.name, intention: intention, time: date.toLocaleString()});
@@ -183,22 +199,23 @@
   }
 
   function documentKeyDown(e) {
+    let key  = (e.key).toLowerCase();
     // if the key is not in the dictionary, ignore (no sound associated)
-    if (!keys[e.key] || showModal || showDeleteModal || showModifyModal || changeKeyModal || addCardModal || settingsModal) {
+    if (!keys[key] || showModal || showDeleteModal || showModifyModal || changeKeyModal || addCardModal || settingsModal) {
       return;
     } 
     // get file and name associated to key
     const {
       file, name
-    } = keys[e.key];
+    } = keys[key];
     
     // if control is pressed play sound and set intention do modeled by guardian
-    if(e.ctrlKey){
-      playSound(keys[e.key], "Modeling by Guardian");
+    if(e.shiftKey){
+      playSound(keys[key], "Modeling by Guardian");
       currentSound = name;
     // else, just play souns
     }else {
-      playSound(keys[e.key]);
+      playSound(keys[key]);
       currentSound = name;
     }
     
@@ -249,7 +266,10 @@
         keyboard = keyboard;
       }
     }
-    saveCommBoardState();
+    if (sintesizedVoice){
+      saveCommBoardState();
+    }
+    
 
     // close modal
     showDeleteModal = false;
@@ -296,7 +316,10 @@
         }
       }
       // close modal
-      saveCommBoardState();
+      if(sintesizedVoice){
+        saveCommBoardState();
+      }
+      
       changeKeyModal = false;
     } else {
       window.alert("Key already in use");
@@ -351,36 +374,66 @@
   // add sound to cards
   function addSound(){
 
+    let sound = '';
     // get name, key and sound from form
     // @ts-ignore
     let name = document.getElementById("name").value
     // @ts-ignore
     let key = document.getElementById("key").value 
-    let sound = document.getElementById("x")
+    if (!sintesizedVoice){
+      // @ts-ignore
+      sound = document.getElementById("x")
+    }
+    
 
     // if all values are not null
     let key_lowercase = key.toLowerCase();
-    if (name != '' && key_lowercase != '' && sound != null){
-      // if key is available create element and add new sound
-      if (!keyboard.includes(key_lowercase)){
-        let element = {"sound": sound, "name": name, "key": key_lowercase}
-        // @ts-ignore
-        sections.push(element);
-        sections = sections;
-        keys[key_lowercase] = element;
-        keyboard.push(key_lowercase);
-        keyboard = keyboard;
-        // @ts-ignore
-        document.getElementById("name").value = "";
-        // @ts-ignore
-        document.getElementById("key").value = "";
-        saveCommBoardState();
-      // if key is not available, alert
-      } else {
-        window.alert("Key already in use");
+    if (!sintesizedVoice){
+      if (name != '' && key_lowercase != '' && sound != null){
+        if (!keyboard.includes(key_lowercase)){
+          let element = {"sound": sound, "name": name, "key": key_lowercase}
+          // @ts-ignore
+          sections.push(element);
+          sections = sections;
+          keys[key_lowercase] = element;
+          keyboard.push(key_lowercase);
+          keyboard = keyboard;
+          // @ts-ignore
+          document.getElementById("name").value = "";
+          // @ts-ignore
+          document.getElementById("key").value = "";
+          // if key is not available, alert
+        } else {
+          window.alert("Key already in use");
+        }
       }
+    }
+    else {
+      if (name != '' && key_lowercase != ''){
+        // if key is available create element and add new sound
+        if (!keyboard.includes(key_lowercase)){
+          let element = {"sound": sound, "name": name, "key": key_lowercase}
+          // @ts-ignore
+          sections.push(element);
+          sections = sections;
+          keys[key_lowercase] = element;
+          keyboard.push(key_lowercase);
+          keyboard = keyboard;
+          // @ts-ignore
+          document.getElementById("name").value = "";
+          // @ts-ignore
+          document.getElementById("key").value = "";
+          saveCommBoardState();
+          // if key is not available, alert
+        } else {
+          window.alert("Key already in use");
+        }
+      
       
     }
+
+    }
+    
     
     
   }
@@ -466,21 +519,25 @@
     <br>
     <label for="key">Keyboard key</label>
     <input type="text" id="key" name="key" maxlength="1">
-    <section>
-      <button on:click={startRecording}>Record</button>
-      <button on:click={stopRecording}>Stop</button>
-      <div class="player">
-        <div id="info" class="info {isActive ? 'active' : ''}">
-          <span class="artist">Recording</span>
-          
+    {#if !sintesizedVoice}
+      <section>
+        <button on:click={startRecording}>Record</button>
+        <button on:click={stopRecording}>Stop</button>
+        <div class="player">
+          <div id="info" class="info {isActive ? 'active' : ''}">
+            <span class="artist">Recording</span>
+            
+          </div>
+          <div id="control-panel" class="control-panel {isActive ? 'active' : ''}">
+            <div class="album-art" />
+          </div>
         </div>
-        <div id="control-panel" class="control-panel {isActive ? 'active' : ''}">
-          <div class="album-art" />
-        </div>
+      </section>
+      <div>
+        <audio controls />
       </div>
-    </section>
+    {/if}
     <div>
-      <audio controls />
       <button on:click={addSound}>Add</button>
     </div>
 	</Modal>
