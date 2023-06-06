@@ -12,12 +12,14 @@
   export let settingsModal;
   export let sintesizedVoice;
   export let lang;
+  export let pitch;
+  export let rate;
   export let logsModal;
   let newCardModal = false;
 
   let shiftPressed = false;
 
-  let commBoardState = {};
+  // export let commBoardState;
   
   
 
@@ -56,102 +58,12 @@
   let previousEntries = [];
   let isActive = false;
 
-  let keyboard = [];
-
-  let sections = []
-  
-  let keys = {};
+  export let keyboard;
+  export let sections;
+  export let keys;
 
 
   const audio = new Audio();
-
-  function deserializeState(serializedState) {
-    const deserializedState = {
-      keyboard: serializedState.keyboard || [],
-      keys: {},
-      sections: []
-    };
-
-    if (serializedState.keys) {
-      for (const keyData of serializedState.keys) {
-        const key = Object.keys(keyData)[0];
-        const { sound, name, key: keyProp } = keyData[key];
-        const audio = new Audio(sound);
-        deserializedState.keys[key] = { sound: audio, name, key: keyProp };
-      }
-    }
-
-    if (serializedState.sections) {
-      for (const sectionData of serializedState.sections) {
-        const { sound, name, key } = sectionData;
-        const audio = new Audio(sound);
-        deserializedState.sections.push({ sound: audio, name, key });
-      }
-    }
-    return deserializedState;
-}
-
-
-
-
-  auth.onAuthStateChanged((user) => {
-    if(user) {
-      if (sintesizedVoice){
-        const userId = user.uid;
-        db.collection('commBoardStates').doc(userId).get()
-        .then((snapshot) => {
-          if (snapshot && snapshot.exists) {
-            const serializedState = snapshot.data().commBoardState;
-            commBoardState = deserializeState(serializedState);
-            keyboard = commBoardState['keyboard'];
-            keys = commBoardState['keys'];
-            sections = commBoardState['sections'];
-          }
-        })
-      }
-      
-    } else {
-      keyboard = ["k", "m", "o", "p"];
-
-      sections = [{"sound": new Audio('./sounds/no.mp3'), "name": "No", "key": "k"},
-                      {"sound": new Audio('./sounds/yes.mp3'), "name": "Yes", "key": "m"},
-                      {"sound": new Audio('./sounds/drink.mp3'), "name": "Drink", "key": "o"},
-                      {"sound": new Audio('./sounds/eat.mp3'), "name": "Eat", "key": "p"}]
-      
-      keys = {"k": sections[0], "m": sections[1], "o": sections[2], "p": sections[3]};
-        }
-  })
-
-  function saveCommBoardState(){
-    if (firebaseUser){
-      const userId = firebaseUser.uid;
-      commBoardState['keyboard'] = keyboard;
-      commBoardState['keys'] = keys;
-      commBoardState['sections'] = sections;
-      const serializedState = {
-        keyboard: commBoardState['keyboard'],
-        keys: Object.keys(commBoardState['keys']).map((key) => ({
-          [key]: {
-            sound: commBoardState['keys'][key].sound,
-            name: commBoardState['keys'][key].name,
-            key: commBoardState['keys'][key].key
-          }
-        })),
-        sections: commBoardState['sections'].map((section) => ({
-          sound: section.sound,
-          name: section.name,
-          key: section.key
-        }))
-      };
-      db.collection('commBoardStates').doc(userId).set({ commBoardState: serializedState })
-      .then(() => {
-        console.log('Comm board state saved successfully.');
-      })
-      .catch((error) => {
-        console.error('Error saving comm board state:', error);
-      });
-    }
-  }
 
   function playSound(sound, intention=null) {
       // obtain date
@@ -182,6 +94,8 @@
         const speechSynthesis = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(sound.name);
         utterance.lang = lang;
+        utterance.pitch = pitch;
+        utterance.rate = rate;
         speechSynthesis.speak(utterance);
       }
       
@@ -459,6 +373,7 @@
   export let addCardModal;
   export let closeCardModal;
   export let closeLogModal;
+  export let saveCommBoardState;
 
 </script>
 
