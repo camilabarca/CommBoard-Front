@@ -474,8 +474,9 @@
       on:contextmenu={(event) => handleContextMenu(event, sound.name)}
       class:sound-button-active={currentSound === sound.name}
       >
-      <h4>{sound.name}</h4>
       <small class='key'>{sound.key}</small>
+      <h4>{sound.name}</h4>
+      
     </div>
   {/each}
 </div>
@@ -679,60 +680,41 @@
     }
   }
 
-  .selected {
-    color: blue;
-  }
-  .logs_container {
-    color: #000f08;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    padding: 10px;
-  }
-  .logs_container div {
-    margin-top: 30px;
-    font-size: 14px;
-    line-height: 5px;
-  }
-  .logs_container select, 
-  .logs_container p {
-    font-size: 12px;
-  }
   .container {
-    width: 100vmin;
-    height: 40vmin;
-    text-align: center;
+    /* width: 100vmin; */
+    /* height: 80vmin; */
+    /* text-align: center; */
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    /* grid-template-rows: repeat(5, 1fr); */
+    grid-template-columns: repeat(8, 1fr);
     grid-gap: 15px 15px;
     color: black;
-    margin: 0 auto;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .sound-button {
         position: relative;
-        background-color: #eaeaea;
+        background-color: rgba(0,0,0,0.2);
         display: inline-flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        outline: 1px solid #000000;
+        outline: 8px solid #35394f;
         font-size: 2.5vmin;
         cursor: pointer;
-        box-shadow: 5px 5px 5px #000000;
         transition: background 0.25s linear, color 0.25s linear, box-shadow 0.15s linear;
         text-transform: uppercase;
+        color: green;
     }
 
     .sound-button:hover {
-        background: #003366;
-        color: #ffffff !important;
+        background: rgb(30, 53, 30);
+        color: #deddff !important;
     }
 
     .key{
         font-size: 1.3vw;
-        position: absolute;
         top: 1vw;
     }
 
@@ -760,5 +742,9 @@
     }
     .last-entry {
       background-color: #f5f5f5;
+    }
+
+    button {
+      background-color: #fff3f3;
     }
 </style>

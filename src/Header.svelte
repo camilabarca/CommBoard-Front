@@ -23,7 +23,8 @@
       justify-content: space-between;
       align-items: center;
       padding: 10px;
-      background-color: #f0f0f0;
+      background-color: rgb(234 122 122);
+      color: #fff3f3;
       height: 80px;
       margin-bottom: 10px;
     }

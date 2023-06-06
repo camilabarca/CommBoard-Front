@@ -200,7 +200,7 @@
     .info-box {
         border: 1px solid #ccc;
         padding: 10px;
-        background-color: #f8f8f8;
+        background-color: rgb(234 122 122);
         border-radius: 4px;
     }
 
@@ -244,7 +244,7 @@
 
     .button-group button {
         padding: 10px 20px;
-        background-color: #f0f0f0;
+        background-color: #fff3f3;
         border: none;
         border-radius: 4px;
         cursor: pointer;
