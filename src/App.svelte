@@ -333,7 +333,7 @@
     {#if audioSettingsModal}
     <Modal on:close={closeAudioSettings}>
         <div class="toggle-group">
-            <label for="synthesizedVoice">Use Audio Recordings? (This sounds will not be saved in your account)</label>
+            <label for="synthesizedVoice">Use Audio Recordings? (These sounds will not be saved in your account)</label>
             <div class="toggle-switch">
               <input type="checkbox" id="synthesizedVoice" name="synthesizedVoice" checked={!sintesizedVoice} on:change={() => sintesizedVoice = !event.target.checked}>
               <label for="synthesizedVoice"></label>
