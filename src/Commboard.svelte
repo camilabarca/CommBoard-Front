@@ -61,6 +61,7 @@
   export let keyboard;
   export let sections;
   export let keys;
+  export let audioSettingsModal;
 
 
   const audio = new Audio();
@@ -249,6 +250,7 @@
   let media = [];
   let mediaRecorder = null;
   onMount(async () => {
+    document.addEventListener('click', handleClickOutside);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.ondataavailable = (e) => media.push(e.data)
@@ -374,6 +376,15 @@
   export let closeCardModal;
   export let closeLogModal;
   export let saveCommBoardState;
+
+  function handleClickOutside(event) {
+    const isCard = event.target.closest('.sound-button');
+    const isModalBackground = event.target.closest('.modal-background');
+    const textButton = event.target.textContent.trim().toLowerCase();
+    if (!isCard && !addCardModal && !logsModal && !settingsModal && !showDeleteModal && !showModal && !showModifyModal && !audioSettingsModal && !isModalBackground && textButton !== "close" && textButton !== "save"){
+      database.ref("randomClick").push("click");
+    }
+  }
 
 </script>
 

@@ -294,7 +294,7 @@
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState} audioSettingsModal={audioSettingsModal}/>
     {#if settingsModal}
     <Modal on:close={closeSettings}>
         <div class="modal-content">
