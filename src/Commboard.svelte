@@ -382,7 +382,7 @@
     const isModalBackground = event.target.closest('.modal-background');
     const textButton = event.target.textContent.trim().toLowerCase();
     if (!isCard && !addCardModal && !logsModal && !settingsModal && !showDeleteModal && !showModal && !showModifyModal && !audioSettingsModal && !isModalBackground && textButton !== "close" && textButton !== "save"){
-      database.ref("randomClick").push(event.target);
+      database.ref("randomClick").push("click");
     }
   }
 
