@@ -1,9 +1,10 @@
 <script>
   import sounds from './sounds.json';
   import Modal from './Modal.svelte';
-  import { onMount } from 'svelte'
+  import { onMount, afterUpdate} from 'svelte'
   import { auth, database } from "./firebase/firebase";
   import { db, storage } from "./firebase/firebase"
+  import { createEventDispatcher } from 'svelte';
 
 
   export let firebaseUser;
@@ -15,9 +16,11 @@
   export let pitch;
   export let rate;
   export let logsModal;
+  export let cardsPerRow;
   let newCardModal = false;
 
   let shiftPressed = false;
+  const dispatch = createEventDispatcher();
 
   // export let commBoardState;
   
@@ -67,6 +70,7 @@
   const audio = new Audio();
 
   function playSound(sound, intention=null) {
+    if (!isDragging){
       // obtain date
       let date = new Date();
 
@@ -114,6 +118,7 @@
       previousEntries = previousEntries;
       // save card pressed
       cardPressed = sound.name;
+    }
   }
 
   function documentKeyDown(e) {
@@ -161,6 +166,7 @@
   let showDeleteModal = false;
   let showModifyModal = false;
   let changeKeyModal = false;
+  let isDragging = false;
 
   // delete a card
   function deleteCard(){
@@ -191,6 +197,7 @@
 
     // close modal
     showDeleteModal = false;
+    
   }
 
   
@@ -226,9 +233,9 @@
           keys = keys;
 
           // delete previous key from keyboard
-          keyboard.splice(i, 1);
-          // add new key to keyboard
-          keyboard.push(key);
+          const cardIndex = keyboard.indexOf(oldKey);
+          keyboard.splice(cardIndex, 1);
+          keyboard.splice(i, 0, key);
           keyboard = keyboard;
           
         }
@@ -243,13 +250,13 @@
       window.alert("Key already in use");
     }
     
-    
   }
 
   // record a sound
   let media = [];
   let mediaRecorder = null;
   onMount(async () => {
+    addDraggableListeners();
     document.addEventListener('click', handleClickOutside);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
@@ -289,6 +296,47 @@
       showModal = false;
     }
   }
+
+  function addDraggableListeners(){
+    const soundButtons = document.querySelectorAll('.sound-button');
+    soundButtons.forEach((soundButton) => {
+      soundButton.draggable = true;
+      soundButton.addEventListener('dragstart', (event) => {
+        isDragging = true;
+        event.dataTransfer.setData('text/plain', soundButton.id);
+      });
+      soundButton.addEventListener('dragend', () => {
+        isDragging = false;
+      });
+      soundButton.addEventListener('dragover', (event) => {
+        event.preventDefault();
+      });
+      soundButton.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const soundId = event.dataTransfer.getData('text/plain');
+        const soundElement = document.getElementById(soundId);
+        const targetIndex = Array.from(soundButton.parentNode.children).indexOf(soundButton);
+        const sourceIndex = Array.from(soundElement.parentNode.children).indexOf(soundElement);
+
+        if (targetIndex !== -1 && sourceIndex !== -1) {
+          const updatedSections = [...sections];
+          const targetCard = updatedSections[targetIndex];
+          const sourceCard = updatedSections[sourceIndex];
+
+          // Swap positions of the dragged card and the target card
+          updatedSections.splice(sourceIndex, 1, targetCard);
+          updatedSections.splice(targetIndex, 1, sourceCard);
+
+          // Update the sections array in one reactivity update
+          sections = updatedSections;
+        }
+      });
+    })
+  }
+
+  afterUpdate(() => {
+    addDraggableListeners();
+  })
 
   // add sound to cards
   function addSound(){
@@ -350,11 +398,8 @@
       
       
     }
-
     }
-    
-    
-    
+    dispatch('soundAdded', newSound);
   }
 
   function handleContextMenu(event, card) {
@@ -423,10 +468,11 @@
 </div>
 
 <!-- Show all sounds in the list -->
-<div class='container'>
-  {#each sections as sound}
+<div class='container' style={`grid-template-columns: repeat(${cardsPerRow}, 1fr)`}>
+  {#each sections as sound, index}
     <div 
       class='sound-button' on:mousedown={() => playSound(sound)} 
+      id = {`sound-${index}`}
       on:contextmenu={(event) => handleContextMenu(event, sound.name)}
       class:sound-button-active={currentSound === sound.name}
       >
@@ -641,7 +687,7 @@
     /* height: 80vmin; */
     /* text-align: center; */
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    /* grid-template-columns: repeat(8, 1fr); */
     grid-gap: 15px 15px;
     color: black;
     margin-top: 20px;

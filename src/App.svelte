@@ -31,6 +31,7 @@
 
     let guardian = null;
     let subject = null;
+    let cardsPerRow = 8;
     let sintesizedVoice = true;
     let lang = 'en-US'
     let pitch = 1.0;
@@ -172,6 +173,7 @@
                 lang = commBoardState['lang'];
                 pitch = commBoardState['pitch'];
                 rate = commBoardState['rate'];
+                cardsPerRow = commBoardState['cardsPerRow']
             }
             })
         }
@@ -197,7 +199,8 @@
         subject : serializedState.subject || '',
         lang: serializedState.lang || 'en-US', 
         pitch: serializedState.pitch || 1.0,
-        rate: serializedState.rate || 1.0
+        rate: serializedState.rate || 1.0,
+        cardsPerRow: serializedState.cardsPerRow || 8
         };
 
         if (serializedState.keys) {
@@ -243,7 +246,8 @@
             subject: subject,
             lang: lang,
             pitch: pitch,
-            rate: rate
+            rate: rate,
+            cardsPerRow: cardsPerRow
         };
         console.log(serializedState);
         db.collection('commBoardStates').doc(userId).set({ commBoardState: serializedState })
@@ -294,7 +298,7 @@
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState} audioSettingsModal={audioSettingsModal}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState} audioSettingsModal={audioSettingsModal} cardsPerRow = {cardsPerRow}/>
     {#if settingsModal}
     <Modal on:close={closeSettings}>
         <div class="modal-content">
@@ -305,6 +309,10 @@
           <div class="input-group">
             <label for="subjectName">Subject Name</label>
             <input type="text" id="subjectName" name="subjectName" bind:value={subject}>
+          </div>
+          <div class="input-group">
+            <label for="cardsPerRow">Cards per row</label>
+            <input type="number" id="numberOfCards" min="1" max="15" bind:value={cardsPerRow}>
           </div>
           <div class="button-group">
             {#if firebaseUser}
