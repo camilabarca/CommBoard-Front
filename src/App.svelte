@@ -294,8 +294,8 @@
             </div>
         </div>
         <div slot="buttons">
-            <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}><p style="user-select: none;">Settings (Hold for 3 seconds)</p></button>
-            <button on:mousedown={handleLogButtonPress} on:mouseup={handleLogButtonRelease}><p style="user-select:none;">Local Logs (Hold for 3 seconds)</p></button>
+            <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease} on:touchstart={handleButtonPress} on:touchend={handleButtonRelease}><p style="user-select: none;">Settings (Hold for 3 seconds)</p></button>
+            <button on:mousedown={handleLogButtonPress} on:mouseup={handleLogButtonRelease} on:touchstart={handleLogButtonPress} on:touchend={handleLogButtonRelease}><p style="user-select:none;">Local Logs (Hold for 3 seconds)</p></button>
         </div>
     </Header>
     
