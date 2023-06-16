@@ -478,7 +478,7 @@
 </script>
 
 <div>
-  <button on:mousedown={handleShiftClick} on:mouseup={handleShiftRelease}>Shift</button>
+  <button on:mousedown={handleShiftClick} on:mouseup={handleShiftRelease} on:touchstart={handleShiftClick} on:touchend={handleShiftRelease} class='shiftButton'>Shift</button>
 </div>
 
 <!-- Show all sounds in the list -->
@@ -762,5 +762,10 @@
 
     button {
       background-color: #fff3f3;
+    }
+
+    .shiftButton {
+      user-select: none; /* Prevent text selection */
+      -webkit-touch-callout: none; /* Prevent long-press menu on iOS */
     }
 </style>
