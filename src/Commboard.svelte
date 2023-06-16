@@ -17,6 +17,7 @@
   export let rate;
   export let logsModal;
   export let cardsPerRow;
+  export let moveCards;
   let newCardModal = false;
 
   let shiftPressed = false;
@@ -191,7 +192,7 @@
       }
     }
     if (sintesizedVoice){
-      saveCommBoardState();
+      saveCommBoardState(sections, keyboard, keys);
     }
     
 
@@ -242,7 +243,7 @@
       }
       // close modal
       if(sintesizedVoice){
-        saveCommBoardState();
+        saveCommBoardState(sections, keyboard, keys);
       }
       
       changeKeyModal = false;
@@ -257,6 +258,7 @@
   let mediaRecorder = null;
   onMount(async () => {
     addDraggableListeners();
+    
     document.addEventListener('click', handleClickOutside);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
@@ -299,39 +301,51 @@
 
   function addDraggableListeners(){
     const soundButtons = document.querySelectorAll('.sound-button');
-    soundButtons.forEach((soundButton) => {
-      soundButton.draggable = true;
-      soundButton.addEventListener('dragstart', (event) => {
-        isDragging = true;
-        event.dataTransfer.setData('text/plain', soundButton.id);
-      });
-      soundButton.addEventListener('dragend', () => {
-        isDragging = false;
-      });
-      soundButton.addEventListener('dragover', (event) => {
-        event.preventDefault();
-      });
-      soundButton.addEventListener('drop', (event) => {
-        event.preventDefault();
-        const soundId = event.dataTransfer.getData('text/plain');
-        const soundElement = document.getElementById(soundId);
-        const targetIndex = Array.from(soundButton.parentNode.children).indexOf(soundButton);
-        const sourceIndex = Array.from(soundElement.parentNode.children).indexOf(soundElement);
+    if (moveCards){
+      
+      soundButtons.forEach((soundButton) => {
+        soundButton.draggable = true;
+        soundButton.addEventListener('dragstart', (event) => {
+          isDragging = true;
+          event.dataTransfer.setData('text/plain', soundButton.id);
+        });
+        soundButton.addEventListener('dragend', () => {
+          isDragging = false;
+        });
+        soundButton.addEventListener('dragover', (event) => {
+          event.preventDefault();
+        });
+        soundButton.addEventListener('drop', (event) => {
+          event.preventDefault();
+          const soundId = event.dataTransfer.getData('text/plain');
+          const soundElement = document.getElementById(soundId);
+          const targetIndex = Array.from(soundButton.parentNode.children).indexOf(soundButton);
+          const sourceIndex = Array.from(soundElement.parentNode.children).indexOf(soundElement);
 
-        if (targetIndex !== -1 && sourceIndex !== -1) {
-          const updatedSections = [...sections];
-          const targetCard = updatedSections[targetIndex];
-          const sourceCard = updatedSections[sourceIndex];
+          if (targetIndex !== -1 && sourceIndex !== -1) {
+            const updatedSections = [...sections];
+            const targetCard = updatedSections[targetIndex];
+            const sourceCard = updatedSections[sourceIndex];
 
-          // Swap positions of the dragged card and the target card
-          updatedSections.splice(sourceIndex, 1, targetCard);
-          updatedSections.splice(targetIndex, 1, sourceCard);
+            // Swap positions of the dragged card and the target card
+            updatedSections.splice(sourceIndex, 1, targetCard);
+            updatedSections.splice(targetIndex, 1, sourceCard);
 
-          // Update the sections array in one reactivity update
-          sections = updatedSections;
-        }
-      });
-    })
+            // Update the sections array in one reactivity update
+            sections = updatedSections;
+            console.log(sections);
+          }
+        });
+      })
+      saveCommBoardState(sections, keyboard, keys);
+
+    } else {
+      soundButtons.forEach((soundButton) => {
+        soundButton.draggable = false;
+      })
+
+    }
+    
   }
 
   afterUpdate(() => {
@@ -390,7 +404,7 @@
           document.getElementById("name").value = "";
           // @ts-ignore
           document.getElementById("key").value = "";
-          saveCommBoardState();
+          saveCommBoardState(sections, keyboard, keys);
           // if key is not available, alert
         } else {
           window.alert("Key already in use");

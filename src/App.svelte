@@ -33,6 +33,7 @@
     let subject = null;
     let cardsPerRow = 8;
     let sintesizedVoice = true;
+    let moveCards = false;
     let lang = 'en-US'
     let pitch = 1.0;
     let rate = 1.0;
@@ -222,7 +223,7 @@
         return deserializedState;
     }
 
-    function saveCommBoardState(){
+    function saveCommBoardState(sections, keyboard, keys){
         if (firebaseUser){
         const userId = firebaseUser.uid;
         commBoardState['keyboard'] = keyboard;
@@ -293,12 +294,12 @@
             </div>
         </div>
         <div slot="buttons">
-            <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}>Settings (Hold for 3 seconds)</button>
-            <button on:mousedown={handleLogButtonPress} on:mouseup={handleLogButtonRelease}>Local Logs (Hold for 3 seconds)</button>
+            <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease}><p style="user-select: none;">Settings (Hold for 3 seconds)</p></button>
+            <button on:mousedown={handleLogButtonPress} on:mouseup={handleLogButtonRelease}><p style="user-select:none;">Local Logs (Hold for 3 seconds)</p></button>
         </div>
     </Header>
     
-    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState} audioSettingsModal={audioSettingsModal} cardsPerRow = {cardsPerRow}/>
+    <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState} audioSettingsModal={audioSettingsModal} cardsPerRow = {cardsPerRow} moveCards={moveCards}/>
     {#if settingsModal}
     <Modal on:close={closeSettings}>
         <div class="modal-content">
@@ -313,6 +314,13 @@
           <div class="input-group">
             <label for="cardsPerRow">Cards per row</label>
             <input type="number" id="numberOfCards" min="1" max="15" bind:value={cardsPerRow}>
+          </div>
+          <div class="toggle-group">
+            <label for="moveCards">Move cards?</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="moveCards" name="moveCards" checked={moveCards} on:change={() => moveCards = event.target.checked}>
+              <label for="moveCards"></label>
+            </div>
           </div>
           <div class="button-group">
             {#if firebaseUser}
