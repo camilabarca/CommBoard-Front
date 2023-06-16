@@ -762,10 +762,11 @@
 
     button {
       background-color: #fff3f3;
-    }
-
-    .shiftButton {
-      user-select: none; /* Prevent text selection */
-      -webkit-touch-callout: none; /* Prevent long-press menu on iOS */
+      touch-action: manipulation; /* Disable touch gestures */
+      -webkit-user-select: none; /* WebKit browsers */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none; /* Non-prefixed version */
+      /* Other button styles */
     }
 </style>
