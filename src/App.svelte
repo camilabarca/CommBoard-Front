@@ -343,6 +343,8 @@
             <p>Camila Labarca</p>
             <a href="https://github.com/camilabarca/CommBoard-Front">Github repository</a>
             <p>camila.labarca@ug.uchile.cl</p>
+            <p>What did you think of the page? Answer our form:</p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfasidWl4m-w32WRu7nHpz1hAaEhiLJPRStEng2mHfL77u5sA/viewform?usp=sf_link">Click here!</a>
         </div>
       </Modal>
     {/if}
