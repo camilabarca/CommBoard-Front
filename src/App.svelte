@@ -15,20 +15,20 @@
     import Modal from "./Modal.svelte";
     import { onMount } from 'svelte';
 
+    import { TrainerButton, Fa } from 'inca-utils';
+    import {
+        faExpand,
+        faGears,
+        faList,
+        faArrowLeft,
+    } from '@fortawesome/free-solid-svg-icons';
+
     let firebaseUser = null;
 
     let settingsModal = false;
     let logsModal = false;
     let audioSettingsModal = false;
-
-    let pressStartTime = null;
-    let buttonPressed = false;
-    let timer = null;
-
-    let logPressStartTime = null;
-    let logButtonPressed = false;
-    let logTimer = null;
-
+    
     let guardian = null;
     let subject = null;
     let cardsPerRow = 8;
@@ -72,43 +72,6 @@
         signOut(auth);
         firebaseUser = null;
         console.log(firebaseUser);
-    }
-
-    function handleLogButtonPress() {
-        if (!logButtonPressed) {
-            logPressStartTime = Date.now();
-            logButtonPressed = true;
-
-            logTimer = setInterval(() => {
-                if (logButtonPressed && Date.now() - logPressStartTime >= 3000) {
-                logsModal = true;
-                clearInterval(logTimer);
-                }
-            }, 100);
-        }
-    }
-    function handleLogButtonRelease() {
-        logButtonPressed = false;
-        clearInterval(logTimer);
-    }
-
-    function handleButtonPress() {
-        if (!buttonPressed) {
-            pressStartTime = Date.now();
-            buttonPressed = true;
-
-            timer = setInterval(() => {
-                if (buttonPressed && Date.now() - pressStartTime >= 3000) {
-                settingsModal = true;
-                clearInterval(timer);
-                }
-            }, 100);
-        }
-    }
-
-    function handleButtonRelease() {
-        buttonPressed = false;
-        clearInterval(timer);
     }
 
     function saveGuardianAndSubject(){
@@ -293,9 +256,23 @@
                 </div>
             </div>
         </div>
-        <div slot="buttons">
-            <button on:mousedown={handleButtonPress} on:mouseup={handleButtonRelease} on:touchstart={handleButtonPress} on:touchend={handleButtonRelease}><p style="user-select: none;">Settings (Hold for 3 seconds)</p></button>
-            <button on:mousedown={handleLogButtonPress} on:mouseup={handleLogButtonRelease} on:touchstart={handleLogButtonPress} on:touchend={handleLogButtonRelease}><p style="user-select:none;">Local Logs (Hold for 3 seconds)</p></button>
+        <div slot="buttons" class="trainerbuttons">
+            <TrainerButton
+            label="Settings"
+            longpressTime={3000}
+            on:click={() => settingsModal = true}
+            --background-color="green"
+            --font-size="0.8em"
+            --width="3px"
+            ><Fa icon={faGears} /></TrainerButton>
+            <TrainerButton
+            label="Local logs"
+            longpressTime={3000}
+            on:click={() => logsModal = true}
+            --background-color="green"
+            --font-size="0.8em"
+            --width="3px"
+            ><Fa icon={faList} /></TrainerButton>
         </div>
     </Header>
     
@@ -489,6 +466,12 @@
         margin-bottom: 10px;
         font-size: 12px;
         line-height: 1.4;
+    }
+
+    .trainerbuttons {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
     }
 
 

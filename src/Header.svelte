@@ -25,7 +25,7 @@
       padding: 10px;
       background-color: rgb(234 122 122);
       color: #fff3f3;
-      height: 80px;
+      height: 100px;
       margin-bottom: 10px;
     }
   
