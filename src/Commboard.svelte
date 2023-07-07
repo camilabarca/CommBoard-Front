@@ -429,15 +429,6 @@
     cardPressed = card;
   }
 
-  function handleShiftClick() {
-    shiftPressed = true;
-  }
-
-  function handleShiftRelease(){
-    shiftPressed = false;
-
-  }
-
   export let addCardModal;
   export let closeCardModal;
   export let closeLogModal;
