@@ -75,6 +75,7 @@
 		border-radius: 0.2em;
 		background: white;
 		text-align: center;
+		z-index: 9999;
 	}
 
 	button {

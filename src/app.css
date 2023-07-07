@@ -13,6 +13,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  touch-action: manipulation; /* Disable touch gestures */
+  -webkit-user-select: none; /* WebKit browsers */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version */
 }
 
 a {

@@ -5,6 +5,11 @@
   import { auth, database } from "./firebase/firebase";
   import { db, storage } from "./firebase/firebase"
   import { createEventDispatcher } from 'svelte';
+  import { TrainerButton, Fa } from 'inca-utils';
+  import {
+      faArrowUp,
+      faLock
+  } from '@fortawesome/free-solid-svg-icons';
 
 
   export let firebaseUser;
@@ -21,6 +26,7 @@
   let newCardModal = false;
 
   let shiftPressed = false;
+  let capsLock = false;
   const dispatch = createEventDispatcher();
 
   // export let commBoardState;
@@ -91,7 +97,7 @@
       }
       // @ts-ignore
       // if control was pressed, the intention was modeled by guardian
-      if (window.event.shiftKey || shiftPressed){
+      if (window.event.shiftKey || shiftPressed || capsLock){
         intention = "Modeling by Guardian"
       }
 
@@ -119,6 +125,7 @@
       previousEntries = previousEntries;
       // save card pressed
       cardPressed = sound.name;
+      shiftPressed = false;
     }
   }
 
@@ -134,7 +141,7 @@
     } = keys[key];
     
     // if control is pressed play sound and set intention do modeled by guardian
-    if(e.shiftKey || shiftPressed){
+    if(e.shiftKey || shiftPressed || capsLock){
       playSound(keys[key], "Modeling by Guardian");
       currentSound = name;
     // else, just play souns
@@ -477,8 +484,26 @@
 
 </script>
 
-<div>
-  <button on:mousedown={handleShiftClick} on:mouseup={handleShiftRelease} on:touchstart={handleShiftClick} on:touchend={handleShiftRelease} class='shiftButton'>Shift</button>
+<div class="protected-button">
+  <TrainerButton
+  label="Shift"
+  longpressTime={3000}
+  on:click={() => shiftPressed = true}
+  --background-color={shiftPressed ? "rgb(234 122 122)" : "green"}
+  --font-size="0.8em"
+  --width="3px"
+  ><Fa icon={faArrowUp} />
+  </TrainerButton>
+
+  <TrainerButton
+  label="Caps Lock"
+  longpressTime={3000}
+  on:click={() => capsLock = !capsLock}
+  --background-color={capsLock ? "rgb(234 122 122)" : "green"}
+  --font-size="0.8em"
+  --width="3px"
+  ><Fa icon={faLock} />
+  </TrainerButton>
 </div>
 
 <!-- Show all sounds in the list -->
@@ -768,5 +793,10 @@
       -ms-user-select: none; /* Internet Explorer/Edge */
       user-select: none; /* Non-prefixed version */
       /* Other button styles */
+    }
+
+    .protected-button {
+      display: flex;
+      gap: 10px;
     }
 </style>

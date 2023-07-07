@@ -232,48 +232,6 @@
 </script>
  <main>
     <Header title="InCA ComBoard">
-        <div slot="info">
-            <div class="info-box">
-                <div class="info-row">
-                    <span class="label">Guardian:</span>
-                    {#if guardian} 
-                        <p>{guardian}</p>
-                    {/if}
-                </div>
-                
-                <div class="info-row">
-                    <span class="label">Subject:</span>
-                    {#if subject}
-                        <p>{subject}</p>
-                    {/if}
-                </div>
-        
-                <div class="info-row">
-                    <span class="label">User:</span>
-                    {#if firebaseUser}
-                        <p>{firebaseUser.email}</p>
-                    {/if}
-                </div>
-            </div>
-        </div>
-        <div slot="buttons" class="trainerbuttons">
-            <TrainerButton
-            label="Settings"
-            longpressTime={3000}
-            on:click={() => settingsModal = true}
-            --background-color="green"
-            --font-size="0.8em"
-            --width="3px"
-            ><Fa icon={faGears} /></TrainerButton>
-            <TrainerButton
-            label="Local logs"
-            longpressTime={3000}
-            on:click={() => logsModal = true}
-            --background-color="green"
-            --font-size="0.8em"
-            --width="3px"
-            ><Fa icon={faList} /></TrainerButton>
-        </div>
     </Header>
     
     <Commboard firebaseUser ={firebaseUser} guardianName={guardian} subjectName={subject} settingsModal={settingsModal} {addCardModal} {closeCardModal} sintesizedVoice={sintesizedVoice} lang={lang} pitch={pitch} rate={rate} logsModal={logsModal} {closeLogModal} commBoardState={commBoardState} sections={sections} keyboard={keyboard} keys={keys} {saveCommBoardState} audioSettingsModal={audioSettingsModal} cardsPerRow = {cardsPerRow} moveCards={moveCards}/>
@@ -351,9 +309,53 @@
         </div>
         <button on:click={tryAudio}>Try Audio</button>
 
-    </Modal>
-        
+    </Modal>     
     {/if}
+    <div class="guardian">
+
+        <div class="trainerbuttons">
+            <TrainerButton
+            label="Settings"
+            longpressTime={3000}
+            on:click={() => settingsModal = true}
+            --background-color="green"
+            --font-size="0.8em"
+            --width="3px"
+            ><Fa icon={faGears} /></TrainerButton>
+            <TrainerButton
+            label="Local logs"
+            longpressTime={3000}
+            on:click={() => logsModal = true}
+            --background-color="green"
+            --font-size="0.8em"
+            --width="3px"
+            ><Fa icon={faList} /></TrainerButton>
+        </div>
+        <div>
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Guardian:</span>
+                    {#if guardian} 
+                        <p>{guardian}</p>
+                    {/if}
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Subject:</span>
+                    {#if subject}
+                        <p>{subject}</p>
+                    {/if}
+                </div>
+        
+                <div class="info-row">
+                    <span class="label">User:</span>
+                    {#if firebaseUser}
+                        <p>{firebaseUser.email}</p>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <style>
@@ -471,6 +473,12 @@
     .trainerbuttons {
         display: flex;
         flex-direction: row;
+        gap: 10px;
+    }
+    .guardian {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
         gap: 10px;
     }
 
